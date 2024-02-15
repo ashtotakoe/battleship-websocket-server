@@ -1,0 +1,11 @@
+*.js
+*.md
+dist
+front
+build
+*.svg
+*.html
+*.scss
+*.json
+node_modules
+documentation

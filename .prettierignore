@@ -1,0 +1,8 @@
+.hg
+dist
+front
+.git
+.svn
+.github
+node_modules
+documentation
