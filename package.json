@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "ts-node-dev --respawn --no-notify src/index.ts",
-    "start:prod": "tsc && node dist/index.js",
+    "front:start": "node dist/index.js",
+    "start:dev": "tsx watch --no-warnings src/main.ts",
+    "start:prod": "tsc && node dist/main.js",
     "build": "tsc",
     "eslint": "eslint \"src/**/*.ts\"",
     "eslint:fix": "eslint \"src/**/*.ts\" --fix",
@@ -18,7 +18,6 @@
   "keywords": [],
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.16",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
@@ -30,9 +29,9 @@
   "dependencies": {
     "@types/node": "^20.11.18",
     "@types/ws": "^8.5.10",
-    "dotenv": "^16.4.4",
-    "ts-node-dev": "^2.0.0",
+    "rxjs": "^7.8.1",
+    "tsx": "^4.7.2",
     "typescript": "^5.3.3",
-    "ws": "^8.8.0"
+    "ws": "^8.16.0"
   }
 }
