@@ -40,7 +40,11 @@ export class Client {
 
   private listen() {
     this.socket.on('message', data => {
-      this.requests$$.next(JSON.parse(data.toString()) as Message<unknown>)
+      const req = JSON.parse(data.toString())
+      if (req.data !== '') {
+        req.data = JSON.parse(req.data)
+      }
+      this.requests$$.next(req as Message<unknown>)
     })
 
     this.socket.on('close', () => this.requests$$.complete())

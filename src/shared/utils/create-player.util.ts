@@ -1,13 +1,7 @@
 import { Player } from '../models/models.js'
 
-
-let index = 0
-const getIndex = () => {
-  return index++
-}
-
-export const createPlayer = (name: string, password: string): Player=> ({
+export const createPlayer = (name: string, password: string, index: number): Player => ({
   name,
   password,
-  index: getIndex(),
+  index,
 })

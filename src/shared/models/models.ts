@@ -12,13 +12,11 @@ export interface CreateUserData {
 export interface ClientState {
   id: number
   isAuthorized?: boolean
-  player?: Player
+  playerData?: Player
 }
 
 export interface Player {
   name: string
-  index: number,
+  index: number
   password: string
 }
-
-
