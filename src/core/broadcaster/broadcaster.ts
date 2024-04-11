@@ -1,7 +1,7 @@
 import { Observable, tap } from 'rxjs'
 
 import { Clients } from '../../shared/types/types.js'
-import { gameRoomsUpdateResponse } from '../../shared/utils/responses.js'
+import { gameRoomsUpdateResponse } from '../../shared/utils/responses.utils.js'
 import { GameRoom } from '../game_rooms/game-room.js'
 import { Client } from '../server/client.js'
 
@@ -25,7 +25,6 @@ export class Broadcaster {
     this.availableGameRooms$
       .pipe(
         tap(gameRooms => {
-          console.log('rrrrefresh')
           this.gameRooms = gameRooms
 
           this.activeClients.forEach(client => {
@@ -37,16 +36,6 @@ export class Broadcaster {
   }
 
   public syncState(client: Client) {
-    client.send(gameRoomsUpdateResponse(this.gameRooms))
-  }
-
-  public syncStateWithAll() {
-    this.activeClients.forEach(client => {
-      client.send(gameRoomsUpdateResponse(this.gameRooms))
-    })
-  }
-
-  public syncStateWithOne(client: Client) {
     client.send(gameRoomsUpdateResponse(this.gameRooms))
   }
 }

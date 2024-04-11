@@ -6,17 +6,17 @@ import { Events } from '../../shared/enums/enums.js'
 import { Clients } from '../../shared/types/types.js'
 import { generateUniqueIndex } from '../../shared/utils/generate-unique-index.util.js'
 import { Broadcaster } from '../broadcaster/broadcaster.js'
-import { GameRoomFactory } from '../game_rooms/game-room-factory.js'
+import { GameRoomsManager } from '../game_rooms/game-rooms-manager.js'
 import { Client } from './client.js'
-import { getRequestsWithRouterForServer } from './routers/router-for-server.js'
+import { getRequestsWithRouterForServer } from './server-router.js'
 
 export class WSServer {
   private wss: WebSocketServer
   private activeClients: Clients = new Map()
-  private gameRoomFactory = new GameRoomFactory()
+  private gameRoomsManager = new GameRoomsManager()
   private broadcaster = new Broadcaster({
     activeClients: this.activeClients,
-    availableGameRooms$: this.gameRoomFactory.availableGameRooms$,
+    availableGameRooms$: this.gameRoomsManager.availableGameRooms$,
   })
 
   public eventEmitter = new EventEmitter()
@@ -49,15 +49,15 @@ export class WSServer {
 
   private setupEmitter() {
     this.eventEmitter.addListener(Events.SYNC_WINNERS_AND_ROOMS_FOR_CLIENT, (client: Client) => {
-      this.broadcaster.syncStateWithOne(client)
+      this.broadcaster.syncState(client)
     })
 
     this.eventEmitter.addListener(Events.CREATE_ROOM, () => {
-      this.gameRoomFactory.createGameRoom()
+      this.gameRoomsManager.createGameRoom()
     })
 
     this.eventEmitter.addListener(Events.ADD_USER_TO_ROOM, (client: Client, roomId: number) => {
-      this.gameRoomFactory.addUserToRoom(client, roomId)
+      this.gameRoomsManager.addUserToRoom(client, roomId)
     })
   }
 }

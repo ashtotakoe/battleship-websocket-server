@@ -1,14 +1,14 @@
 import EventEmitter from 'node:events'
 import { filter, tap } from 'rxjs'
 
-import { requestTypesForServer } from '../../../shared/constants/request-types.js'
-import { Events } from '../../../shared/enums/enums.js'
-import { CreateUserData, Message, Player } from '../../../shared/models/models.js'
-import { Handler } from '../../../shared/types/types.js'
-import { createPlayer } from '../../../shared/utils/create-player.util.js'
-import { userIsAuthorizedResponse, wrongPasswordResponse } from '../../../shared/utils/responses.js'
-import { db } from '../../db/data-base.js'
-import { Client } from '../client.js'
+import { requestTypesForServer } from '../../shared/constants/request-types.js'
+import { Events } from '../../shared/enums/enums.js'
+import { CreateUserData, Message, Player } from '../../shared/models/models.js'
+import { Handler } from '../../shared/types/types.js'
+import { createPlayer } from '../../shared/utils/create-player.util.js'
+import { userIsAuthorizedResponse, wrongPasswordResponse } from '../../shared/utils/responses.utils.js'
+import { db } from '../db/data-base.js'
+import { Client } from './client.js'
 
 const sendRegistrationSuccessfulResponse = (client: Client, player: Player, eventEmitter: EventEmitter) => {
   const { clientState } = client

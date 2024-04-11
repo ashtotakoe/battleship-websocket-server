@@ -4,7 +4,7 @@ import { generateUniqueIndex } from '../../shared/utils/generate-unique-index.ut
 import { Client } from '../server/client.js'
 import { GameRoom } from './game-room.js'
 
-export class GameRoomFactory {
+export class GameRoomsManager {
   private readonly availableGameRooms$$ = new BehaviorSubject<GameRoom[]>([])
   public readonly availableGameRooms$ = this.availableGameRooms$$.asObservable()
 
