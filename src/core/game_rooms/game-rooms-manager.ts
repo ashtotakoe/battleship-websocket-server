@@ -18,10 +18,13 @@ export class GameRoomsManager {
   }
 
   public addUserToRoom(user: Client, roomId: number) {
-    const gameRoom = this.availableGameRooms.find(room => room.roomId === roomId)
+    const targetRoom = this.availableGameRooms.find(room => room.roomId === roomId)
 
-    if (gameRoom && !gameRoom.roomUsers.includes(user)) {
-      gameRoom.addUser(user)
+    if (targetRoom && !targetRoom.roomUsers.includes(user)) {
+      const otherRoomWithUser = this.availableGameRooms.find(room => room.roomUsers.includes(user))
+      otherRoomWithUser?.removeUser(user)
+
+      targetRoom.addUser(user)
       this.availableGameRooms$$.next(this.availableGameRooms)
     }
   }
