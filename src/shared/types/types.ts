@@ -11,3 +11,5 @@ export type Handler = (handlerArgs: {
   allClients?: Clients
   eventEmitter?: EventEmitter
 }) => void
+
+export type Handlers = Record<string, Handler>

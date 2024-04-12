@@ -1,4 +1,4 @@
-import { GameRoom } from '../../core/game_rooms/game-room.js'
+import { GameRoom } from '../../core/game_rooms/game-room/game-room.js'
 import { Client } from '../../core/server/client.js'
 import { Player } from '../models/models.js'
 import { createResponse } from './create-response.util.js'

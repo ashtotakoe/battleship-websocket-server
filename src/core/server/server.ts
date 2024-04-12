@@ -11,7 +11,7 @@ import { Client } from './client.js'
 import { getRequestsWithRouterForServer } from './server-router.js'
 
 export class WSServer {
-  private wss: WebSocketServer
+  private readonly wss: WebSocketServer
   private activeClients: Clients = new Map()
   private gameRoomsManager = new GameRoomsManager()
   private broadcaster = new Broadcaster({

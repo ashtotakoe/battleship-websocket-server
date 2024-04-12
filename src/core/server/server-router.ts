@@ -4,7 +4,7 @@ import { filter, tap } from 'rxjs'
 import { requestTypesForServer } from '../../shared/constants/request-types.js'
 import { Events } from '../../shared/enums/enums.js'
 import { CreateUserData, Message, Player } from '../../shared/models/models.js'
-import { Handler } from '../../shared/types/types.js'
+import { Handlers } from '../../shared/types/types.js'
 import { createPlayer } from '../../shared/utils/create-player.util.js'
 import { userIsAuthorizedResponse, wrongPasswordResponse } from '../../shared/utils/responses.utils.js'
 import { db } from '../db/data-base.js'
@@ -20,7 +20,7 @@ const sendRegistrationSuccessfulResponse = (client: Client, player: Player, even
   eventEmitter.emit(Events.SYNC_WINNERS_AND_ROOMS_FOR_CLIENT, client)
 }
 
-const handlers: Record<string, Handler> = {
+const handlers: Handlers = {
   reg: ({ message, client, eventEmitter }) => {
     const { clientState } = client
 
