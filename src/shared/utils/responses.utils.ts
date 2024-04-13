@@ -1,7 +1,7 @@
 import { GameRoom } from '../../core/game_rooms/game-room/game-room.js'
 import { Client } from '../../core/server/client.js'
 import { ResponseTypes } from '../enums/enums.js'
-import { Player } from '../models/models.js'
+import { Player, Ship } from '../models/models.js'
 import { createResponse } from './create-response.util.js'
 
 export const userIsAuthorizedResponse = (player: Player) =>
@@ -30,9 +30,14 @@ export const gameRoomsUpdateResponse = (gameRooms: GameRoom[]) =>
     })),
   )
 
-export const createGameResponse = (user: Client, gameRoom: GameRoom) => {
-  return createResponse(ResponseTypes.CreateGame, {
+export const createGameResponse = (user: Client, gameRoom: GameRoom) =>
+  createResponse(ResponseTypes.CreateGame, {
     idGame: gameRoom.game?.gameId,
     idPlayer: user.clientState.playerData?.temporaryGameId,
   })
-}
+
+export const startGameReponse = (playerId: number, ships: Ship[]) =>
+  createResponse(ResponseTypes.StartGame, {
+    ships,
+    currentPlayerIndex: playerId,
+  })

@@ -1,16 +1,7 @@
+import { GameCell } from '../../core/game_rooms/game-room/game/game-cell.js'
 import { Client } from '../../core/server/client.js'
-import { GameRoomCallback } from '../types/types.js'
-
-export interface Message<T> {
-  type: string
-  data: T
-  id: number
-}
-
-export interface CreateUserData {
-  name: string
-  password: string
-}
+import { GameRoomCallback, ShipSize } from '../types/types.js'
+import { Message } from './messages.model.js'
 
 export interface ClientState {
   id: number
@@ -33,4 +24,25 @@ export interface GameRoomCallbacks {
 export interface RequestToGameRoom {
   message: Message<unknown>
   client: Client
+}
+
+export interface Ship {
+  position: {
+    x: number
+    y: number
+  }
+  direction: boolean
+  length: number
+  type: ShipSize
+}
+
+export interface ShipsPosition {
+  fullBoard: GameCell[][]
+  cellsWithShips?: GameCell[]
+  ships?: Ship[]
+}
+
+export interface Coordinates {
+  x: number
+  y: number
 }

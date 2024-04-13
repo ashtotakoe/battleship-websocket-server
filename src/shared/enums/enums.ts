@@ -13,10 +13,12 @@ export const enum ResponseTypes {
   Registration = 'reg',
   UpdateRoom = 'update_room',
   CreateGame = 'create_game',
+  StartGame = 'start_game',
 }
 
 export const enum RequestTypes {
   Registration = 'reg',
   CreateRoom = 'create_room',
   AddUserToRoom = 'add_user_to_room',
+  AddShips = 'add_ships',
 }

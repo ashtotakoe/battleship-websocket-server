@@ -1,7 +1,8 @@
 import { BehaviorSubject, Observable, Subject } from 'rxjs'
 import WebSocket from 'ws'
 
-import { ClientState, Message } from '../../shared/models/models.js'
+import { Message } from '../../shared/models/messages.model.js'
+import { ClientState } from '../../shared/models/models.js'
 
 export class Client {
   private readonly socket: WebSocket

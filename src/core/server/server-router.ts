@@ -1,9 +1,10 @@
 import EventEmitter from 'node:events'
-import { filter, tap } from 'rxjs'
+import { catchError, filter, of, tap } from 'rxjs'
 
 import { requestTypesForServer } from '../../shared/constants/request-types.js'
 import { Events, RequestTypes } from '../../shared/enums/enums.js'
-import { CreateUserData, Message, Player } from '../../shared/models/models.js'
+import { CreateUserData, Message } from '../../shared/models/messages.model.js'
+import { Player } from '../../shared/models/models.js'
 import { Handlers } from '../../shared/types/types.js'
 import { createPlayer } from '../../shared/utils/create-player.util.js'
 import { userIsAuthorizedResponse, wrongPasswordResponse } from '../../shared/utils/responses.utils.js'
@@ -66,5 +67,10 @@ export const getRequestsWithRouterForServer = (client: Client, eventEmitter: Eve
       if (handler) {
         handler({ message, client, eventEmitter })
       }
+    }),
+    catchError(error => {
+      console.warn(error)
+
+      return of(null)
     }),
   )

@@ -1,16 +1,17 @@
-import { map, merge, Subscription } from 'rxjs'
+import { map, merge, Observable, Subscription } from 'rxjs'
 
-import { GameRoomCallbacks } from '../../../shared/models/models.js'
+import { GameRoomCallbacks, Player, RequestToGameRoom } from '../../../shared/models/models.js'
 import { generateUniqueIndex } from '../../../shared/utils/generate-unique-index.util.js'
 import { createGameResponse } from '../../../shared/utils/responses.utils.js'
 import { Client } from '../../server/client.js'
-import { getRequestsWithRouterForGameRoom } from './game-rooms-router.js'
-import { Game } from './game.js'
+import { getRequestsWithRouterForGameRoom } from './game-room-router.js'
+import { Game } from './game/game.js'
 
 export class GameRoom {
   public roomId: number
   public roomUsers: Client[] = []
   public game: Game | null = null
+  public requests$: Observable<RequestToGameRoom> | null = null
 
   private readonly gameRoomCallbacks: GameRoomCallbacks
   private subscription?: Subscription
@@ -26,7 +27,7 @@ export class GameRoom {
     }
 
     if (this.roomUsers.length === 2) {
-      this.gameIsStarted()
+      this.startGame()
     }
   }
 
@@ -34,20 +35,22 @@ export class GameRoom {
     this.roomUsers = this.roomUsers.filter(userInRoom => userInRoom !== user)
   }
 
-  private gameIsStarted() {
-    console.log('GAME IS STARTED')
-
-    this.game = new Game(this.roomId)
-    this.subscription = getRequestsWithRouterForGameRoom(
-      merge(...this.roomUsers.map(user => user.requests$.pipe(map(message => ({ message, client: user }))))),
-    ).subscribe()
-
+  private startGame() {
+    console.log('GAME IS CREATED')
     this.gameRoomCallbacks.gameIsStarted(this.roomId)
+
     this.roomUsers.forEach(user => {
       this.assignTemporaryGameIdsToUser(user)
 
       user.send(createGameResponse(user, this))
     })
+
+    this.setUpRequestsFromUsers()
+
+    this.game = new Game(
+      this.roomId,
+      this.roomUsers.map(({ clientState }) => clientState.playerData as Player),
+    )
   }
 
   private assignTemporaryGameIdsToUser({ clientState }: Client) {
@@ -56,5 +59,20 @@ export class GameRoom {
     if (playerData) {
       playerData.temporaryGameId = generateUniqueIndex()
     }
+  }
+
+  private setUpRequestsFromUsers() {
+    this.requests$ = merge(
+      ...this.roomUsers.map(user =>
+        user.requests$.pipe(
+          map(message => ({
+            message,
+            client: user,
+          })),
+        ),
+      ),
+    )
+
+    this.subscription = getRequestsWithRouterForGameRoom(this)?.subscribe()
   }
 }
