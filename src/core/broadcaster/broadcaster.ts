@@ -34,9 +34,8 @@ export class Broadcaster {
       .pipe(
         tap(broadcast => {
           if (broadcast.broadcastFrom === BroadcastSources.GameRooms) {
-            const data = broadcast.data as GameRoom[]
-            this.gameRooms = data
-            this.sendToAllClients(data)
+            this.gameRooms = broadcast.data as GameRoom[]
+            this.sendToAllClients(this.gameRooms)
           }
         }),
       )

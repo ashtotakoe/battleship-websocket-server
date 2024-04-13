@@ -3,7 +3,6 @@ import { catchError, filter, of, tap } from 'rxjs'
 import { requestTypesForGameRoom } from '../../../shared/constants/request-types.js'
 import { RequestTypes } from '../../../shared/enums/enums.js'
 import { AddShipsData, Message } from '../../../shared/models/messages.model.js'
-import { Player } from '../../../shared/models/models.js'
 import { GameBoards, Handlers } from '../../../shared/types/types.js'
 import { startGameReponse } from '../../../shared/utils/responses.utils.js'
 import { GameRoom } from './game-room.js'
@@ -13,19 +12,19 @@ const checkIfBothBoardsAreSet = (gameBoards: GameBoards) =>
 
 const handlers: Handlers = {
   [RequestTypes.AddShips]: ({ message, gameRoom }) => {
-    const data = (message as Message<AddShipsData>).data
+    const playerData = (message as Message<AddShipsData>).data
     const game = gameRoom?.game
 
-    if (!data || !game) {
+    if (!playerData || !game) {
       return
     }
 
-    game.addShipsForPlayer(data.indexPlayer, data.ships)
+    game.addShipsForPlayer(playerData.indexPlayer, playerData.ships)
 
     if (checkIfBothBoardsAreSet(game.gameBoards)) {
       gameRoom.roomUsers.forEach(user => {
-        const { temporaryGameId } = user.clientState.playerData as Player
-        const ships = game.getShips(temporaryGameId ?? 0)
+        const temporaryGameId = user.clientState.playerData?.temporaryGameId ?? 0
+        const ships = game.getShips(temporaryGameId)
 
         if (ships?.length && temporaryGameId) {
           user.send(startGameReponse(temporaryGameId, ships))
@@ -47,6 +46,7 @@ export const getRequestsWithRouterForGameRoom = (gameRoom: GameRoom) =>
     }),
     catchError(error => {
       console.warn(error)
+
       return of(null)
     }),
   )

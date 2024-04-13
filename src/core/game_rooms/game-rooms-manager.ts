@@ -9,7 +9,7 @@ export class GameRoomsManager {
   private readonly availableGameRooms$$ = new BehaviorSubject<GameRoom[]>([])
   private gameRoomCallbacks: GameRoomCallbacks = {
     gameIsStarted: roomId => {
-      const room = this.availableGameRooms.find(room => room.roomId === roomId)
+      const room = this.findRoomById(roomId)
 
       if (room) {
         this.usersCurrentlyInGame.push(...room.roomUsers)
@@ -18,10 +18,10 @@ export class GameRoomsManager {
       }
     },
     gameIsOver: roomId => {
-      const room = this.availableGameRooms.find(room => room.roomId === roomId)
+      const endedGameRoom = this.findRoomById(roomId)
 
-      if (room) {
-        this.usersCurrentlyInGame.filter(user => !room.roomUsers.includes(user))
+      if (endedGameRoom) {
+        this.usersCurrentlyInGame.filter(user => !endedGameRoom.roomUsers.includes(user))
       }
     },
   }
@@ -35,6 +35,7 @@ export class GameRoomsManager {
 
   public createGameRoom() {
     const newRoom = new GameRoom(generateUniqueIndex(), this.gameRoomCallbacks)
+
     this.availableGameRooms$$.next([...this.availableGameRooms, newRoom])
   }
 

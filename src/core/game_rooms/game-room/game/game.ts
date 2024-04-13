@@ -16,7 +16,7 @@ export class Game {
   }
 
   public addShipsForPlayer(playerId: number, ships: Ship[]) {
-    const shipsPosition = this.gameBoards.get(playerId)
+    const shipsPosition = this.getShipsPosition(playerId)
 
     if (!shipsPosition) {
       return
@@ -40,9 +40,7 @@ export class Game {
   public getShips(playerId: number) {
     const shipsPosition = this.getShipsPosition(playerId)
 
-    if (shipsPosition) {
-      return shipsPosition.ships ?? null
-    }
+    return shipsPosition?.ships ?? null
   }
 
   private getShipsPosition(playerId: number) {

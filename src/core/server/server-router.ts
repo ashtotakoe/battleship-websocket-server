@@ -11,36 +11,36 @@ import { userIsAuthorizedResponse, wrongPasswordResponse } from '../../shared/ut
 import { db } from '../db/data-base.js'
 import { Client } from './client.js'
 
-const sendRegistrationSuccessfulResponse = (client: Client, player: Player, eventEmitter: EventEmitter) => {
+const authorizePlayer = (client: Client, player: Player, eventEmitter: EventEmitter) => {
   const { clientState } = client
 
   clientState.isAuthorized = true
   clientState.playerData = player
 
-  client.send(userIsAuthorizedResponse(player))
+  client.send(userIsAuthorizedResponse(clientState.playerData))
   eventEmitter.emit(Events.SyncWinnersAndRoomsForClient, client)
 }
 
 const handlers: Handlers = {
   [RequestTypes.Registration]: ({ message, client, eventEmitter }) => {
     const { clientState } = client
+    const { data } = message as Message<CreateUserData>
 
     if ((clientState.isAuthorized && clientState.playerData) || !eventEmitter) {
       return
     }
 
-    const { data } = message as Message<CreateUserData>
-
     const player = db.getPlayer(data.name)
 
     if (!player) {
       const newPlayer = createPlayer(data.name, data.password, clientState.id)
-      sendRegistrationSuccessfulResponse(client, newPlayer, eventEmitter)
+      authorizePlayer(client, newPlayer, eventEmitter)
+
       return
     }
 
     if (player.password === data.password) {
-      sendRegistrationSuccessfulResponse(client, player, eventEmitter)
+      authorizePlayer(client, player, eventEmitter)
 
       return
     }
