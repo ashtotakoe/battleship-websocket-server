@@ -9,9 +9,10 @@ export const enum BroadcastSources {
   Winners = 'winners',
 }
 
-export const enum MessageTypes {
+export const enum ResponseTypes {
   Registration = 'reg',
   UpdateRoom = 'update_room',
+  CreateGame = 'create_game',
 }
 
 export const enum RequestTypes {

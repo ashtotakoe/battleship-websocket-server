@@ -1,3 +1,7 @@
 export class Game {
-  public name: string = 'Game'
+  public gameId: number
+
+  constructor(gameId: number) {
+    this.gameId = gameId
+  }
 }

@@ -1,11 +1,11 @@
 import { GameRoom } from '../../core/game_rooms/game-room/game-room.js'
 import { Client } from '../../core/server/client.js'
-import { MessageTypes } from '../enums/enums.js'
+import { ResponseTypes } from '../enums/enums.js'
 import { Player } from '../models/models.js'
 import { createResponse } from './create-response.util.js'
 
 export const userIsAuthorizedResponse = (player: Player) =>
-  createResponse(MessageTypes.Registration, {
+  createResponse(ResponseTypes.Registration, {
     name: player.name,
     index: player.index,
     error: false,
@@ -13,14 +13,14 @@ export const userIsAuthorizedResponse = (player: Player) =>
   })
 
 export const wrongPasswordResponse = () =>
-  createResponse(MessageTypes.Registration, {
+  createResponse(ResponseTypes.Registration, {
     error: true,
     errorText: 'Wrong password',
   })
 
 export const gameRoomsUpdateResponse = (gameRooms: GameRoom[]) =>
   createResponse(
-    MessageTypes.UpdateRoom,
+    ResponseTypes.UpdateRoom,
     gameRooms.map(room => ({
       roomId: room.roomId,
       roomUsers: Object.values(room.roomUsers).map((user: Client) => ({
@@ -29,3 +29,10 @@ export const gameRoomsUpdateResponse = (gameRooms: GameRoom[]) =>
       })),
     })),
   )
+
+export const createGameResponse = (user: Client, gameRoom: GameRoom) => {
+  return createResponse(ResponseTypes.CreateGame, {
+    idGame: gameRoom.game?.gameId,
+    idPlayer: user.clientState.playerData?.temporaryGameId,
+  })
+}

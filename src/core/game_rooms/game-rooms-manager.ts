@@ -13,6 +13,8 @@ export class GameRoomsManager {
 
       if (room) {
         this.usersCurrentlyInGame.push(...room.roomUsers)
+
+        this.availableGameRooms$$.next(this.removeRoomById(roomId))
       }
     },
     gameIsOver: roomId => {
@@ -54,5 +56,9 @@ export class GameRoomsManager {
 
   private findRoomById(roomId: number) {
     return this.availableGameRooms.find(room => room.roomId === roomId)
+  }
+
+  private removeRoomById(roomId: number) {
+    return this.availableGameRooms.filter(room => room.roomId !== roomId)
   }
 }
