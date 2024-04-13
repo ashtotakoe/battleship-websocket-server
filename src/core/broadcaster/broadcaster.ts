@@ -1,5 +1,6 @@
-import { Observable, tap } from 'rxjs'
+import { map, merge, Observable, tap } from 'rxjs'
 
+import { BroadcastSources } from '../../shared/enums/enums.js'
 import { Clients } from '../../shared/types/types.js'
 import { gameRoomsUpdateResponse } from '../../shared/utils/responses.utils.js'
 import { GameRoom } from '../game_rooms/game-room/game-room.js'
@@ -22,14 +23,21 @@ export class Broadcaster {
   }
 
   public broadcast() {
-    this.availableGameRooms$
+    merge(
+      this.availableGameRooms$.pipe(
+        map(gameRooms => ({
+          broadcastFrom: BroadcastSources.GameRooms,
+          data: gameRooms,
+        })),
+      ),
+    )
       .pipe(
-        tap(gameRooms => {
-          this.gameRooms = gameRooms
-
-          this.activeClients.forEach(client => {
-            client.send(gameRoomsUpdateResponse(gameRooms))
-          })
+        tap(broadcast => {
+          if (broadcast.broadcastFrom === BroadcastSources.GameRooms) {
+            const data = broadcast.data as GameRoom[]
+            this.gameRooms = data
+            this.sendToAllClients(data)
+          }
         }),
       )
       .subscribe()
@@ -37,5 +45,11 @@ export class Broadcaster {
 
   public syncState(client: Client) {
     client.send(gameRoomsUpdateResponse(this.gameRooms))
+  }
+
+  private sendToAllClients(data: GameRoom[]) {
+    this.activeClients.forEach(client => {
+      client.send(gameRoomsUpdateResponse(data))
+    })
   }
 }

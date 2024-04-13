@@ -2,7 +2,7 @@ import EventEmitter from 'node:events'
 import { filter, tap } from 'rxjs'
 
 import { requestTypesForServer } from '../../shared/constants/request-types.js'
-import { Events } from '../../shared/enums/enums.js'
+import { Events, RequestTypes } from '../../shared/enums/enums.js'
 import { CreateUserData, Message, Player } from '../../shared/models/models.js'
 import { Handlers } from '../../shared/types/types.js'
 import { createPlayer } from '../../shared/utils/create-player.util.js'
@@ -17,11 +17,11 @@ const sendRegistrationSuccessfulResponse = (client: Client, player: Player, even
   clientState.playerData = player
 
   client.send(userIsAuthorizedResponse(player))
-  eventEmitter.emit(Events.SYNC_WINNERS_AND_ROOMS_FOR_CLIENT, client)
+  eventEmitter.emit(Events.SyncWinnersAndRoomsForClient, client)
 }
 
 const handlers: Handlers = {
-  reg: ({ message, client, eventEmitter }) => {
+  [RequestTypes.Registration]: ({ message, client, eventEmitter }) => {
     const { clientState } = client
 
     if ((clientState.isAuthorized && clientState.playerData) || !eventEmitter) {
@@ -47,19 +47,19 @@ const handlers: Handlers = {
     client.send(wrongPasswordResponse())
   },
 
-  create_room: ({ eventEmitter }) => {
-    eventEmitter?.emit(Events.CREATE_ROOM)
+  [RequestTypes.CreateRoom]: ({ eventEmitter }) => {
+    eventEmitter?.emit(Events.CreateRoom)
   },
-  add_user_to_room: ({ message, client, eventEmitter }) => {
+
+  [RequestTypes.AddUserToRoom]: ({ message, client, eventEmitter }) => {
     const { data } = message as Message<{ indexRoom: number }>
 
-    eventEmitter?.emit(Events.ADD_USER_TO_ROOM, client, data.indexRoom)
+    eventEmitter?.emit(Events.AddUserToRoom, client, data.indexRoom)
   },
 }
 
 export const getRequestsWithRouterForServer = (client: Client, eventEmitter: EventEmitter) =>
   client.requests$.pipe(
-    tap(console.log),
     filter(({ type }: Message<unknown>) => requestTypesForServer.includes(type)),
     tap((message: Message<unknown>) => {
       const handler = handlers[message.type]

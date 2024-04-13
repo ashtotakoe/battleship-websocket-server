@@ -9,7 +9,6 @@ const handlers: Handlers = {}
 
 export const getRequestsWithRouterForServer = (client: Client) =>
   client.requests$.pipe(
-    tap(console.log),
     filter(({ type }: Message<unknown>) => requestTypesForServer.includes(type)),
     tap((message: Message<unknown>) => {
       const handler = handlers[message.type]

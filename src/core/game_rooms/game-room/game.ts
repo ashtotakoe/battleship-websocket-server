@@ -1,3 +1,3 @@
 export class Game {
-  public name: string = 'Game Room'
+  public name: string = 'Game'
 }

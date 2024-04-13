@@ -1,11 +1,30 @@
 import { BehaviorSubject } from 'rxjs'
 
+import { GameRoomCallbacks } from '../../shared/models/models.js'
 import { generateUniqueIndex } from '../../shared/utils/generate-unique-index.util.js'
 import { Client } from '../server/client.js'
 import { GameRoom } from './game-room/game-room.js'
 
 export class GameRoomsManager {
   private readonly availableGameRooms$$ = new BehaviorSubject<GameRoom[]>([])
+  private gameRoomCallbacks: GameRoomCallbacks = {
+    gameIsStarted: roomId => {
+      const room = this.availableGameRooms.find(room => room.roomId === roomId)
+
+      if (room) {
+        this.usersCurrentlyInGame.push(...room.roomUsers)
+      }
+    },
+    gameIsOver: roomId => {
+      const room = this.availableGameRooms.find(room => room.roomId === roomId)
+
+      if (room) {
+        this.usersCurrentlyInGame.filter(user => !room.roomUsers.includes(user))
+      }
+    },
+  }
+
+  public usersCurrentlyInGame: Client[] = []
   public readonly availableGameRooms$ = this.availableGameRooms$$.asObservable()
 
   public get availableGameRooms() {
@@ -13,19 +32,27 @@ export class GameRoomsManager {
   }
 
   public createGameRoom() {
-    const newRoom = new GameRoom(generateUniqueIndex())
+    const newRoom = new GameRoom(generateUniqueIndex(), this.gameRoomCallbacks)
     this.availableGameRooms$$.next([...this.availableGameRooms, newRoom])
   }
 
   public addUserToRoom(user: Client, roomId: number) {
-    const targetRoom = this.availableGameRooms.find(room => room.roomId === roomId)
+    const targetRoom = this.findRoomById(roomId)
 
-    if (targetRoom && !targetRoom.roomUsers.includes(user)) {
+    if (this.canUserBeAddedToRoom(targetRoom, user)) {
       const otherRoomWithUser = this.availableGameRooms.find(room => room.roomUsers.includes(user))
       otherRoomWithUser?.removeUser(user)
 
-      targetRoom.addUser(user)
+      targetRoom?.addUser(user)
       this.availableGameRooms$$.next(this.availableGameRooms)
     }
+  }
+
+  private canUserBeAddedToRoom(room: GameRoom | undefined, user: Client) {
+    return room && !room.roomUsers.includes(user) && !this.usersCurrentlyInGame.includes(user)
+  }
+
+  private findRoomById(roomId: number) {
+    return this.availableGameRooms.find(room => room.roomId === roomId)
   }
 }

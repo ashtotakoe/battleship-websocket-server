@@ -1,3 +1,5 @@
+import { GameRoomCallback } from '../types/types.js'
+
 export interface Message<T> {
   type: string
   data: T
@@ -19,4 +21,9 @@ export interface Player {
   name: string
   index: number
   password: string
+}
+
+export interface GameRoomCallbacks {
+  gameIsStarted: GameRoomCallback
+  gameIsOver: GameRoomCallback
 }

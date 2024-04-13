@@ -13,3 +13,5 @@ export type Handler = (handlerArgs: {
 }) => void
 
 export type Handlers = Record<string, Handler>
+
+export type GameRoomCallback = (roomId: number) => void

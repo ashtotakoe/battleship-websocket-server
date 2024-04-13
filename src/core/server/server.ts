@@ -48,15 +48,15 @@ export class WSServer {
   }
 
   private setupEmitter() {
-    this.eventEmitter.addListener(Events.SYNC_WINNERS_AND_ROOMS_FOR_CLIENT, (client: Client) => {
+    this.eventEmitter.addListener(Events.SyncWinnersAndRoomsForClient, (client: Client) => {
       this.broadcaster.syncState(client)
     })
 
-    this.eventEmitter.addListener(Events.CREATE_ROOM, () => {
+    this.eventEmitter.addListener(Events.CreateRoom, () => {
       this.gameRoomsManager.createGameRoom()
     })
 
-    this.eventEmitter.addListener(Events.ADD_USER_TO_ROOM, (client: Client, roomId: number) => {
+    this.eventEmitter.addListener(Events.AddUserToRoom, (client: Client, roomId: number) => {
       this.gameRoomsManager.addUserToRoom(client, roomId)
     })
   }
