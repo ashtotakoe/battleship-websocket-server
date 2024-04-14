@@ -1,6 +1,6 @@
 # Battleship WebSocket Server
 
-This is a WebSocket server for playing the classic Battleship game online. Players can connect and compete against each other in real-time.
+This is a WebSocket server for playing the classic Battleship game together. Players can connect to game rooms and compete against each other in real-time.
 
 ## Installation
 

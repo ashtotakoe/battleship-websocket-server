@@ -1,20 +1,20 @@
 {
-  "name": "ws_task",
+  "name": "battleship-websocket-server",
   "version": "1.0.0",
-  "description": "Template for the WebSocket remote control task",
+  "description": "A websocket server for playing the classic battleship game",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "front:start": "node dist/index.js",
+    "front:start": "node compiled-frontend-server/index.js",
     "start:dev": "tsx watch --no-warnings src/main.ts",
-    "start:prod": "tsc && node dist/main.js",
+    "start:prod": "tsc && node dist-backend/main.js",
     "build": "tsc",
     "eslint": "eslint \"src/**/*.ts\"",
     "eslint:fix": "eslint \"src/**/*.ts\" --fix",
     "prettier": "prettier \"src/**/*.{ts,js}\" --check",
     "prettier:write": "prettier \"src/**/*.{ts,js}\" --write"
   },
-  "author": "Andrei Auchynnikau",
+  "author": "ashtotakoe",
   "keywords": [],
   "license": "ISC",
   "devDependencies": {
@@ -24,14 +24,14 @@
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.2.5"
-  },
-  "dependencies": {
+    "prettier": "^3.2.5",
     "@types/node": "^20.11.18",
     "@types/ws": "^8.5.10",
-    "rxjs": "^7.8.1",
     "tsx": "^4.7.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.1",
     "ws": "^8.16.0"
   }
 }
