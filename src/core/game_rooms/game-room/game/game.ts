@@ -1,4 +1,4 @@
-import { boardLength } from '../../../../shared/constants/board-length.js'
+import { boardLength } from '../../../../shared/constants/board-length.constant.js'
 import { Player, Ship } from '../../../../shared/models/models.js'
 import { GameBoards } from '../../../../shared/types/types.js'
 import { GameCell } from './game-cell.js'

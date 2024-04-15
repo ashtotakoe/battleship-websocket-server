@@ -14,6 +14,7 @@ export const enum ResponseTypes {
   UpdateRoom = 'update_room',
   CreateGame = 'create_game',
   StartGame = 'start_game',
+  NextTurn = 'turn',
 }
 
 export const enum RequestTypes {

@@ -6,6 +6,7 @@ import { createGameResponse } from '../../../shared/utils/responses.utils.js'
 import { Client } from '../../server/client.js'
 import { getRequestsWithRouterForGameRoom } from './game-room-router.js'
 import { Game } from './game/game.js'
+import { PlayerTurnsObserver } from './game/player-turns-observer.js'
 
 export class GameRoom {
   public roomId: number
@@ -27,7 +28,7 @@ export class GameRoom {
     }
 
     if (this.roomUsers.length === 2) {
-      this.startGame()
+      this.createGame()
     }
   }
 
@@ -35,9 +36,8 @@ export class GameRoom {
     this.roomUsers = this.roomUsers.filter(userInRoom => userInRoom !== user)
   }
 
-  private startGame() {
-    console.log('GAME IS CREATED')
-    this.gameRoomCallbacks.gameIsStarted(this.roomId)
+  private createGame() {
+    this.gameRoomCallbacks.gameIsCreated(this.roomId)
 
     this.roomUsers.forEach(user => {
       this.assignTemporaryGameIdsToUser(user)
@@ -45,12 +45,12 @@ export class GameRoom {
       user.send(createGameResponse(user, this))
     })
 
-    this.setUpRequestsFromUsers()
-
     this.game = new Game(
       this.roomId,
       this.roomUsers.map(({ clientState }) => clientState.playerData as Player),
     )
+
+    this.setUpRequestsFromUsers()
   }
 
   private assignTemporaryGameIdsToUser({ clientState }: Client) {
@@ -73,6 +73,9 @@ export class GameRoom {
       ),
     )
 
-    this.subscription = getRequestsWithRouterForGameRoom(this)?.subscribe()
+    this.subscription = getRequestsWithRouterForGameRoom(
+      this,
+      new PlayerTurnsObserver(this.roomUsers.map(user => user.clientState.playerData as Player)),
+    )?.subscribe()
   }
 }

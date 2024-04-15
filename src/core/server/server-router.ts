@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events'
 import { catchError, filter, of, tap } from 'rxjs'
 
-import { requestTypesForServer } from '../../shared/constants/request-types.js'
+import { requestTypesForServer } from '../../shared/constants/request-types.constant.js'
 import { Events, RequestTypes } from '../../shared/enums/enums.js'
 import { CreateUserData, Message } from '../../shared/models/messages.model.js'
 import { Player } from '../../shared/models/models.js'

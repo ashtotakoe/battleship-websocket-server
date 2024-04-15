@@ -8,7 +8,7 @@ import { GameRoom } from './game-room/game-room.js'
 export class GameRoomsManager {
   private readonly availableGameRooms$$ = new BehaviorSubject<GameRoom[]>([])
   private gameRoomCallbacks: GameRoomCallbacks = {
-    gameIsStarted: roomId => {
+    gameIsCreated: roomId => {
       const room = this.findRoomById(roomId)
 
       if (room) {

@@ -36,8 +36,11 @@ export const createGameResponse = (user: Client, gameRoom: GameRoom) =>
     idPlayer: user.clientState.playerData?.temporaryGameId,
   })
 
-export const startGameReponse = (playerId: number, ships: Ship[]) =>
+export const startGameResponse = (playerId: number, ships: Ship[]) =>
   createResponse(ResponseTypes.StartGame, {
     ships,
     currentPlayerIndex: playerId,
   })
+
+export const nextTurnResponse = (currentPlayerId: number) =>
+  createResponse(ResponseTypes.NextTurn, { currentPlayer: currentPlayerId })

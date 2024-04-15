@@ -17,7 +17,7 @@ export interface Player {
 }
 
 export interface GameRoomCallbacks {
-  gameIsStarted: GameRoomCallback
+  gameIsCreated: GameRoomCallback
   gameIsOver: GameRoomCallback
 }
 
