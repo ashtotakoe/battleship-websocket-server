@@ -24,6 +24,7 @@ export type GameRoomCallback = (roomId: number) => void
 
 export type ShipSize = 'small' | 'medium' | 'large' | 'huge'
 
-export type GameBoards = Map<number, ShipsPosition>
+export type ShipsPositions = Map<number, ShipsPosition>
 
 export type PlayerTurn = number | typeof turnOfNobody
+export type AttackStatus = 'miss' | 'killed' | 'shot'

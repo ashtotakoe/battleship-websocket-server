@@ -1,4 +1,5 @@
-import { Ship } from './models.js'
+import { AttackStatus } from '../types/types.js'
+import { Coordinates, Ship } from './models.js'
 
 export interface Message<T> {
   type: string
@@ -17,7 +18,15 @@ export interface AddShipsData {
   indexPlayer: number
 }
 
-export interface StartGameData {
-  ships: Ship[]
-  currentPlayerIndex: number
+export interface RandomAttackData {
+  indexPLayer: number
+}
+
+export interface AttackData extends RandomAttackData, Coordinates {}
+
+export interface AttackResults {
+  currentPlayer: number
+
+  position: Coordinates
+  status: AttackStatus
 }

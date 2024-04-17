@@ -1,6 +1,7 @@
 import { GameRoom } from '../../core/game_rooms/game-room/game-room.js'
 import { Client } from '../../core/server/client.js'
 import { ResponseTypes } from '../enums/enums.js'
+import { AttackResults } from '../models/messages.model.js'
 import { Player, Ship } from '../models/models.js'
 import { createResponse } from './create-response.util.js'
 
@@ -44,3 +45,6 @@ export const startGameResponse = (playerId: number, ships: Ship[]) =>
 
 export const nextTurnResponse = (currentPlayerId: number) =>
   createResponse(ResponseTypes.NextTurn, { currentPlayer: currentPlayerId })
+
+export const attackResultsResponse = (attackResults: AttackResults) =>
+  createResponse(ResponseTypes.Attack, attackResults)

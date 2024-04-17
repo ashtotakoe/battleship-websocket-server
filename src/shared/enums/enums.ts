@@ -15,6 +15,8 @@ export const enum ResponseTypes {
   CreateGame = 'create_game',
   StartGame = 'start_game',
   NextTurn = 'turn',
+  Attack = 'attack',
+  FinishGame = 'finish',
 }
 
 export const enum RequestTypes {
@@ -22,4 +24,12 @@ export const enum RequestTypes {
   CreateRoom = 'create_room',
   AddUserToRoom = 'add_user_to_room',
   AddShips = 'add_ships',
+  RandomAttack = 'randomAttack',
+  Attack = 'attack',
+}
+
+export const enum AttackStatuses {
+  Miss = 'miss',
+  Shot = 'shot',
+  Killed = 'killed',
 }

@@ -39,6 +39,7 @@ export interface Ship {
 export interface ShipsPosition {
   fullBoard: GameCell[][]
   cellsWithShips?: GameCell[]
+  notShotCells?: GameCell[]
   ships?: Ship[]
 }
 

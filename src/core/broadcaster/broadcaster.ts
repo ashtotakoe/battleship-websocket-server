@@ -3,6 +3,7 @@ import { map, merge, Observable, tap } from 'rxjs'
 import { BroadcastSources } from '../../shared/enums/enums.js'
 import { Clients } from '../../shared/types/types.js'
 import { gameRoomsUpdateResponse } from '../../shared/utils/responses.utils.js'
+import { sendToClients } from '../../shared/utils/send-to-clients.util.js'
 import { GameRoom } from '../game_rooms/game-room/game-room.js'
 import { Client } from '../server/client.js'
 
@@ -47,8 +48,6 @@ export class Broadcaster {
   }
 
   private sendToAllClients(data: GameRoom[]) {
-    this.activeClients.forEach(client => {
-      client.send(gameRoomsUpdateResponse(data))
-    })
+    sendToClients([...this.activeClients.values()], gameRoomsUpdateResponse(data))
   }
 }
