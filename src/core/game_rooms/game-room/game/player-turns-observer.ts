@@ -1,17 +1,24 @@
-import { ReplaySubject } from 'rxjs'
+import { ReplaySubject, tap } from 'rxjs'
 
 import { turnOfNobody } from '../../../../shared/constants/turn-of-nobody.constant.js'
 import { Player } from '../../../../shared/models/models.js'
 import { PlayerTurn } from '../../../../shared/types/types.js'
+import { sendNextTurnResponse } from '../../../../shared/utils/responses.utils.js'
+import { Client } from '../../../server/client.js'
 
 export class PlayerTurnsObserver {
   private playerTurns$$ = new ReplaySubject<PlayerTurn>(1)
   private playerIds: number[]
   private lastIndex: 0 | 1 = 0
 
-  public playerTurns$ = this.playerTurns$$.asObservable()
+  public playerTurns$ = this.playerTurns$$
+    .asObservable()
+    .pipe(tap(nextTurn => sendNextTurnResponse(nextTurn, this.roomUsers)))
 
-  constructor(players: Player[]) {
+  constructor(
+    players: Player[],
+    private roomUsers: Client[],
+  ) {
     this.playerIds = players.map(player => player.temporaryGameId ?? 0)
 
     this.playerTurns$$.next(turnOfNobody)

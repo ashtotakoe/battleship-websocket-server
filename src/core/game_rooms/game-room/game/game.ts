@@ -4,20 +4,16 @@ import { AttackResults } from '../../../../shared/models/messages.model.js'
 import { Coordinates, Player, Ship } from '../../../../shared/models/models.js'
 import { ShipsPositions } from '../../../../shared/types/types.js'
 import { getRandomNumber } from '../../../../shared/utils/get-random-number.js'
-import {
-  getSurroundingCoordinates,
-} from '../../../../shared/utils/get-surrounding-cells.util.js'
+import { getSurroundingCoordinates } from '../../../../shared/utils/get-surrounding-cells.util.js'
 import { GameCell } from './game-cell.js'
 
 export class Game {
-  public gameId: number
-  public players: Player[]
   public shipsPositions: ShipsPositions = new Map()
 
-  constructor(gameId: number, players: Player[]) {
-    this.gameId = gameId
-    this.players = players
-
+  constructor(
+    public gameId: number,
+    public players: Player[],
+  ) {
     this.createBoards()
   }
 

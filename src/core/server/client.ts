@@ -5,16 +5,16 @@ import { Message } from '../../shared/models/messages.model.js'
 import { ClientState } from '../../shared/models/models.js'
 
 export class Client {
-  private readonly socket: WebSocket
   private readonly requests$$ = new Subject<Message<unknown>>()
   private readonly state$$: BehaviorSubject<ClientState>
 
   public readonly requests$: Observable<Message<unknown>> = this.requests$$.asObservable()
   public readonly state$: Observable<ClientState>
 
-  constructor(socket: WebSocket, id: number) {
-    this.socket = socket
-
+  constructor(
+    private readonly socket: WebSocket,
+    id: number,
+  ) {
     this.state$$ = new BehaviorSubject({ id })
 
     this.state$ = this.state$$.asObservable()

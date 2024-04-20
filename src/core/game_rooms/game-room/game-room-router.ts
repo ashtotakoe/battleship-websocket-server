@@ -1,23 +1,17 @@
-import { catchError, filter, map, of, takeWhile, tap, withLatestFrom } from 'rxjs'
+import { catchError, filter, map, of, tap, withLatestFrom } from 'rxjs'
 
 import { requestTypesForGameRoom } from '../../../shared/constants/request-types.constant.js'
 import { turnOfNobody } from '../../../shared/constants/turn-of-nobody.constant.js'
 import { RequestTypes } from '../../../shared/enums/enums.js'
 import { AddShipsData, AttackData, Message } from '../../../shared/models/messages.model.js'
-import { Handlers, PlayerTurn, ShipsPositions } from '../../../shared/types/types.js'
-import { attackResultsResponse, nextTurnResponse, startGameResponse } from '../../../shared/utils/responses.utils.js'
+import { Handlers, ShipsPositions } from '../../../shared/types/types.js'
+import { attackResultsResponse, startGameResponse } from '../../../shared/utils/responses.utils.js'
 import { sendToClients } from '../../../shared/utils/send-to-clients.util.js'
 import { GameRoom } from './game-room.js'
 import { PlayerTurnsObserver } from './game/player-turns-observer.js'
 
 const checkIfBothBoardsAreSet = (gameBoards: ShipsPositions) =>
   Array.from(gameBoards.values()).every(shipsPosition => shipsPosition.cellsWithShips)
-
-const sendNextTurnResponse = (nextPlayerId: PlayerTurn, gameRoom: GameRoom) => {
-  if (nextPlayerId !== turnOfNobody) {
-    sendToClients(gameRoom.roomUsers, nextTurnResponse(nextPlayerId))
-  }
-}
 
 const handlers: Handlers = {
   [RequestTypes.AddShips]: ({ message, gameRoom, playerTurnsObserver }) => {
@@ -58,9 +52,7 @@ const handlers: Handlers = {
     }
   },
 
-  // TODO fix issue with registry
   [RequestTypes.Attack]: ({ message, client, gameRoom, playerTurnsObserver }) => {
-
     const { x, y } = (message as Message<AttackData>).data
     const indexPLayer = client.clientState.playerData?.temporaryGameId
 
@@ -76,16 +68,16 @@ const handlers: Handlers = {
   },
 }
 
-export const getRequestsWithRouterForGameRoom = (gameRoom: GameRoom, playerTurnsObserver: PlayerTurnsObserver) =>
-  gameRoom.requests$?.pipe(
-    withLatestFrom(playerTurnsObserver.playerTurns$.pipe(tap(nextTurn => sendNextTurnResponse(nextTurn, gameRoom)))),
+export const getRequestsWithRouterForGameRoom = (gameRoom: GameRoom, playerTurnsObserver: PlayerTurnsObserver) => {
+  return gameRoom.requests$?.pipe(
+    withLatestFrom(playerTurnsObserver.playerTurns$),
 
-    takeWhile(
+    filter(
       ([{ client }, nextPlayerId]) =>
         nextPlayerId === turnOfNobody || nextPlayerId === client.clientState.playerData?.temporaryGameId,
     ),
 
-    map(([message]) => message),
+    map(([request]) => request),
 
     filter(({ message }) => requestTypesForGameRoom.includes(message.type)),
 
@@ -103,3 +95,4 @@ export const getRequestsWithRouterForGameRoom = (gameRoom: GameRoom, playerTurns
       return of(null)
     }),
   )
+}

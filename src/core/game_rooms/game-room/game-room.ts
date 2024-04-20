@@ -9,18 +9,16 @@ import { Game } from './game/game.js'
 import { PlayerTurnsObserver } from './game/player-turns-observer.js'
 
 export class GameRoom {
-  public roomId: number
   public roomUsers: Client[] = []
   public game: Game | null = null
   public requests$: Observable<RequestToGameRoom> | null = null
 
-  private readonly gameRoomCallbacks: GameRoomCallbacks
   private subscription?: Subscription
 
-  constructor(roomId: number, gamerRoomCallbacks: GameRoomCallbacks) {
-    this.roomId = roomId
-    this.gameRoomCallbacks = gamerRoomCallbacks
-  }
+  constructor(
+    public roomId: number,
+    private readonly gameRoomCallbacks: GameRoomCallbacks,
+  ) {}
 
   public addUser(user: Client) {
     if (this.roomUsers.length < 2 && !this.roomUsers.includes(user)) {
@@ -75,7 +73,10 @@ export class GameRoom {
 
     this.subscription = getRequestsWithRouterForGameRoom(
       this,
-      new PlayerTurnsObserver(this.roomUsers.map(user => user.clientState.playerData as Player)),
+      new PlayerTurnsObserver(
+        this.roomUsers.map(user => user.clientState.playerData as Player),
+        this.roomUsers,
+      ),
     )?.subscribe()
   }
 }

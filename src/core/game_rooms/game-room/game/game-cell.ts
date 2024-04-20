@@ -6,9 +6,5 @@ export class GameCell {
   public sameShipCells: GameCell[] = []
   public ship: Ship | null = null
 
-  public coordinates: Coordinates
-
-  constructor(coordinates: Coordinates) {
-    this.coordinates = coordinates
-  }
+  constructor(public coordinates: Coordinates) {}
 }
