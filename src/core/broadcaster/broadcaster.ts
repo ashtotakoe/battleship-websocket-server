@@ -4,7 +4,7 @@ import { BroadcastSources } from '../../shared/enums/enums.js'
 import { Clients } from '../../shared/types/types.js'
 import { gameRoomsUpdateResponse } from '../../shared/utils/responses.utils.js'
 import { sendToClients } from '../../shared/utils/send-to-clients.util.js'
-import { GameRoom } from '../game_rooms/game-room/game-room.js'
+import { GameRoom } from '../game-room/game-room.js'
 import { Client } from '../server/client.js'
 
 export class Broadcaster {

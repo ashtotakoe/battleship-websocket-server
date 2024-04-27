@@ -6,9 +6,9 @@ import { Events } from '../../shared/enums/enums.js'
 import { Clients } from '../../shared/types/types.js'
 import { generateUniqueIndex } from '../../shared/utils/generate-unique-index.util.js'
 import { Broadcaster } from '../broadcaster/broadcaster.js'
-import { GameRoomsManager } from '../game_rooms/game-rooms-manager.js'
+import { GameRoomsManager } from '../game-rooms-manager/game-rooms-manager.js'
 import { Client } from './client.js'
-import { getRequestsWithRouterForServer } from './server-router.js'
+import { getRequestsWithRouterForServer } from './router/server-router.js'
 
 export class WSServer {
   private readonly wss: WebSocketServer

@@ -1,4 +1,4 @@
-import { Coordinates, Ship } from '../../../../shared/models/models.js'
+import { Coordinates, Ship } from '../../shared/models/models.js'
 
 export class GameCell {
   public wasShot = false

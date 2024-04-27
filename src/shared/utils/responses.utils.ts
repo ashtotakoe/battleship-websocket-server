@@ -1,12 +1,9 @@
-import { GameRoom } from '../../core/game_rooms/game-room/game-room.js'
+import { GameRoom } from '../../core/game-room/game-room.js'
 import { Client } from '../../core/server/client.js'
-import { turnOfNobody } from '../constants/turn-of-nobody.constant.js'
 import { ResponseTypes } from '../enums/enums.js'
 import { AttackResults } from '../models/messages.model.js'
 import { Player, Ship } from '../models/models.js'
-import { PlayerTurn } from '../types/types.js'
 import { createResponse } from './create-response.util.js'
-import { sendToClients } from './send-to-clients.util.js'
 
 export const userIsAuthorizedResponse = (player: Player) =>
   createResponse(ResponseTypes.Registration, {
@@ -52,8 +49,7 @@ export const nextTurnResponse = (currentPlayerId: number) =>
 export const attackResultsResponse = (attackResults: AttackResults) =>
   createResponse(ResponseTypes.Attack, attackResults)
 
-export const sendNextTurnResponse = (nextPlayerId: PlayerTurn, roomUsers: Client[]) => {
-  if (nextPlayerId !== turnOfNobody) {
-    sendToClients(roomUsers, nextTurnResponse(nextPlayerId))
-  }
-}
+export const gameFinishedResponse = (playerId: number) =>
+  createResponse(ResponseTypes.FinishGame, {
+    winPlayer: playerId,
+  })

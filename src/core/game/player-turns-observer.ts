@@ -1,19 +1,18 @@
 import { ReplaySubject, tap } from 'rxjs'
 
-import { turnOfNobody } from '../../../../shared/constants/turn-of-nobody.constant.js'
-import { Player } from '../../../../shared/models/models.js'
-import { PlayerTurn } from '../../../../shared/types/types.js'
-import { sendNextTurnResponse } from '../../../../shared/utils/responses.utils.js'
-import { Client } from '../../../server/client.js'
+import { turnOfNobody } from '../../shared/constants/turn-of-nobody.constant.js'
+import { Player } from '../../shared/models/models.js'
+import { PlayerTurn } from '../../shared/types/types.js'
+import { nextTurnResponse } from '../../shared/utils/responses.utils.js'
+import { sendToClients } from '../../shared/utils/send-to-clients.util.js'
+import { Client } from '../server/client.js'
 
 export class PlayerTurnsObserver {
   private playerTurns$$ = new ReplaySubject<PlayerTurn>(1)
   private playerIds: number[]
   private lastIndex: 0 | 1 = 0
 
-  public playerTurns$ = this.playerTurns$$
-    .asObservable()
-    .pipe(tap(nextTurn => sendNextTurnResponse(nextTurn, this.roomUsers)))
+  public playerTurns$ = this.playerTurns$$.asObservable().pipe(tap(nextTurn => this.sendNextTurnResponse(nextTurn)))
 
   constructor(
     players: Player[],
@@ -30,6 +29,12 @@ export class PlayerTurnsObserver {
 
     this.lastIndex = randomIndex
     this.playerTurns$$.next(playerId)
+  }
+
+  private sendNextTurnResponse(nextPlayerId: PlayerTurn) {
+    if (nextPlayerId !== turnOfNobody) {
+      sendToClients(this.roomUsers, nextTurnResponse(nextPlayerId))
+    }
   }
 
   public nextTurn() {

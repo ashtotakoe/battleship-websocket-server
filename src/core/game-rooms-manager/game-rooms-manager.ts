@@ -2,8 +2,8 @@ import { BehaviorSubject } from 'rxjs'
 
 import { GameRoomCallbacks } from '../../shared/models/models.js'
 import { generateUniqueIndex } from '../../shared/utils/generate-unique-index.util.js'
+import { GameRoom } from '../game-room/game-room.js'
 import { Client } from '../server/client.js'
-import { GameRoom } from './game-room/game-room.js'
 
 export class GameRoomsManager {
   private readonly availableGameRooms$$ = new BehaviorSubject<GameRoom[]>([])

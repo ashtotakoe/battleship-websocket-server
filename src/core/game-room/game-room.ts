@@ -1,12 +1,12 @@
 import { map, merge, Observable, Subscription } from 'rxjs'
 
-import { GameRoomCallbacks, Player, RequestToGameRoom } from '../../../shared/models/models.js'
-import { generateUniqueIndex } from '../../../shared/utils/generate-unique-index.util.js'
-import { createGameResponse } from '../../../shared/utils/responses.utils.js'
-import { Client } from '../../server/client.js'
-import { getRequestsWithRouterForGameRoom } from './game-room-router.js'
-import { Game } from './game/game.js'
-import { PlayerTurnsObserver } from './game/player-turns-observer.js'
+import { GameRoomCallbacks, Player, RequestToGameRoom } from '../../shared/models/models.js'
+import { generateUniqueIndex } from '../../shared/utils/generate-unique-index.util.js'
+import { createGameResponse } from '../../shared/utils/responses.utils.js'
+import { Game } from '../game/game.js'
+import { PlayerTurnsObserver } from '../game/player-turns-observer.js'
+import { Client } from '../server/client.js'
+import { getRequestsWithRouterForGameRoom } from './router/game-room-router.js'
 
 export class GameRoom {
   public roomUsers: Client[] = []
@@ -17,7 +17,7 @@ export class GameRoom {
 
   constructor(
     public roomId: number,
-    private readonly gameRoomCallbacks: GameRoomCallbacks,
+    public readonly gameRoomCallbacks: GameRoomCallbacks,
   ) {}
 
   public addUser(user: Client) {

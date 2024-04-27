@@ -1,4 +1,4 @@
-import { GameCell } from '../../core/game_rooms/game-room/game/game-cell.js'
+import { GameCell } from '../../core/game/game-cell.js'
 import { Client } from '../../core/server/client.js'
 import { GameRoomCallback, ShipSize } from '../types/types.js'
 import { Message } from './messages.model.js'
