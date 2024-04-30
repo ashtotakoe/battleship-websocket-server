@@ -3,7 +3,7 @@ import { CreateUserData, Message } from '../../../shared/models/messages.model.j
 import { Handlers } from '../../../shared/types/types.js'
 import { createPlayer } from '../../../shared/utils/create-player.util.js'
 import { wrongPasswordResponse } from '../../../shared/utils/responses.utils.js'
-import { db } from '../../db/data-base.js'
+import { playersDB } from '../../db/players.data-base.js'
 import { authorizePlayer } from './router-utils/authorize-player.util.js'
 
 export const serverRouterHandlers: Handlers = {
@@ -15,7 +15,7 @@ export const serverRouterHandlers: Handlers = {
       return
     }
 
-    const player = db.getPlayer(data.name)
+    const player = playersDB.getPlayer(data.name)
 
     if (!player) {
       const newPlayer = createPlayer(data.name, data.password, clientState.id)

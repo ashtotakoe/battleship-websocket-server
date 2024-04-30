@@ -35,7 +35,7 @@ export class GameRoom {
   }
 
   private createGame() {
-    this.gameRoomCallbacks.gameIsCreated(this.roomId)
+    this.gameRoomCallbacks.gameIsCreated(this)
 
     this.roomUsers.forEach(user => {
       this.assignTemporaryGameIdsToUser(user)

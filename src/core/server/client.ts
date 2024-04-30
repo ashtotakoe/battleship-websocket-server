@@ -1,15 +1,15 @@
-import { BehaviorSubject, Observable, Subject } from 'rxjs'
+import { BehaviorSubject, map, Observable, Subject } from 'rxjs'
 import WebSocket from 'ws'
 
 import { Message } from '../../shared/models/messages.model.js'
-import { ClientState } from '../../shared/models/models.js'
+import { ClientState, Player } from '../../shared/models/models.js'
 
 export class Client {
   private readonly requests$$ = new Subject<Message<unknown>>()
   private readonly state$$: BehaviorSubject<ClientState>
 
   public readonly requests$: Observable<Message<unknown>> = this.requests$$.asObservable()
-  public readonly state$: Observable<ClientState>
+  public readonly playerData$: Observable<Player | null>
 
   constructor(
     private readonly socket: WebSocket,
@@ -17,7 +17,7 @@ export class Client {
   ) {
     this.state$$ = new BehaviorSubject({ id })
 
-    this.state$ = this.state$$.asObservable()
+    this.playerData$ = this.state$$.asObservable().pipe(map(client => client.playerData ?? null))
 
     this.listen()
   }
@@ -26,12 +26,19 @@ export class Client {
     return this.state$$.value
   }
 
-  public send(data: string) {
-    this.socket.send(data)
+  public playerWon() {
+    const { playerData } = this.clientState
+    if (!playerData) return
+
+    const playerWins = playerData.numberOfWins
+
+    playerData.numberOfWins = playerWins ? playerWins + 1 : 1
+
+    this.state$$.next(Object.assign(this.clientState, { playerData }))
   }
 
-  public setState(state: ClientState) {
-    this.state$$.next(state)
+  public send(data: string) {
+    this.socket.send(data)
   }
 
   public destroy() {

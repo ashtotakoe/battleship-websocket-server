@@ -1,6 +1,6 @@
 import { GameCell } from '../../core/game/game-cell.js'
 import { Client } from '../../core/server/client.js'
-import { GameRoomCallback, ShipSize } from '../types/types.js'
+import { GameOverCallback, GameStartedCallback, ShipSize } from '../types/types.js'
 import { Message } from './messages.model.js'
 
 export interface ClientState {
@@ -14,11 +14,17 @@ export interface Player {
   index: number
   password: string
   temporaryGameId?: number
+  numberOfWins?: number
+}
+
+export interface Winner {
+  name: string
+  wins: number
 }
 
 export interface GameRoomCallbacks {
-  gameIsCreated: GameRoomCallback
-  gameIsOver: GameRoomCallback
+  gameIsCreated: GameStartedCallback
+  gameIsOver: GameOverCallback
 }
 
 export interface RequestToGameRoom {
@@ -46,4 +52,8 @@ export interface ShipsPosition {
 export interface Coordinates {
   x: number
   y: number
+}
+export interface WinnersData {
+  name: string
+  wins: number
 }

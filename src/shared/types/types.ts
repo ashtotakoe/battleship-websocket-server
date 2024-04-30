@@ -20,7 +20,8 @@ export type Handler = (handlerArgs: {
 
 export type Handlers = Record<string, Handler>
 
-export type GameRoomCallback = (roomId: number) => void
+export type GameStartedCallback = (startedGameRoom: GameRoom) => void
+export type GameOverCallback = (endedGameRoom: GameRoom, winnerId: number) => void
 
 export type ShipSize = 'small' | 'medium' | 'large' | 'huge'
 
@@ -29,3 +30,4 @@ export type ShipsPositions = Map<number, ShipsPosition>
 export type PlayerTurn = number | typeof turnOfNobody
 
 export type AttackStatus = 'miss' | 'killed' | 'shot'
+export type Winners = Map<string, number>

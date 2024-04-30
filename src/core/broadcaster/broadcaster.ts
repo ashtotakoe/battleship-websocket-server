@@ -1,53 +1,62 @@
-import { map, merge, Observable, tap } from 'rxjs'
+import { merge, Observable, switchMap, tap } from 'rxjs'
 
-import { BroadcastSources } from '../../shared/enums/enums.js'
+import { Winner } from '../../shared/models/models.js'
 import { Clients } from '../../shared/types/types.js'
-import { gameRoomsUpdateResponse } from '../../shared/utils/responses.utils.js'
+import { gameRoomsUpdateResponse, winnersUpdateResponse } from '../../shared/utils/responses.utils.js'
 import { sendToClients } from '../../shared/utils/send-to-clients.util.js'
+import { winnersDB } from '../db/winners.data-base.js'
 import { GameRoom } from '../game-room/game-room.js'
 import { Client } from '../server/client.js'
 
 export class Broadcaster {
-  private activeClients: Clients
-  private availableGameRooms$: Observable<GameRoom[]>
-  private gameRooms: GameRoom[] = []
+  private availableGameRoomsCashed: GameRoom[] = []
+  private activeClientsCashed: Clients = new Map()
 
-  constructor({
-    activeClients,
-    availableGameRooms$,
-  }: {
-    activeClients: Clients
-    availableGameRooms$: Observable<GameRoom[]>
-  }) {
-    this.activeClients = activeClients
-    this.availableGameRooms$ = availableGameRooms$
-  }
+  constructor(
+    private activeClients$: Observable<Clients>,
+    private availableGameRooms$: Observable<GameRoom[]>,
+  ) {}
 
   public broadcast() {
-    merge(
-      this.availableGameRooms$.pipe(
-        map(gameRooms => ({
-          broadcastFrom: BroadcastSources.GameRooms,
-          data: gameRooms,
-        })),
-      ),
-    )
+    this.availableGameRooms$
       .pipe(
-        tap(broadcast => {
-          if (broadcast.broadcastFrom === BroadcastSources.GameRooms) {
-            this.gameRooms = broadcast.data as GameRoom[]
-            this.sendToAllClients(this.gameRooms)
-          }
+        tap(availableGameRooms => {
+          this.availableGameRoomsCashed = availableGameRooms
+
+          this.sendAvailableGameRoomsToAllClients(availableGameRooms)
         }),
+      )
+      .subscribe()
+
+    this.activeClients$
+      .pipe(
+        tap(activeClients => (this.activeClientsCashed = activeClients)),
+        switchMap(clients =>
+          merge(...Array.from(clients.values()).map(client => client.playerData$)).pipe(
+            tap(playerState => {
+              if (!playerState) return
+
+              winnersDB.addWinnerData(playerState.name, playerState.numberOfWins ?? 0)
+
+              this.sendWinnersToAllClients(winnersDB.getWinnersData())
+            }),
+          ),
+        ),
       )
       .subscribe()
   }
 
   public syncState(client: Client) {
-    client.send(gameRoomsUpdateResponse(this.gameRooms))
+    client.send(gameRoomsUpdateResponse(this.availableGameRoomsCashed))
+
+    client.send(winnersUpdateResponse(winnersDB.getWinnersData()))
   }
 
-  private sendToAllClients(data: GameRoom[]) {
-    sendToClients([...this.activeClients.values()], gameRoomsUpdateResponse(data))
+  private sendAvailableGameRoomsToAllClients(data: GameRoom[]) {
+    sendToClients([...this.activeClientsCashed.values()], gameRoomsUpdateResponse(data))
+  }
+
+  private sendWinnersToAllClients(winners: Winner[]) {
+    sendToClients([...this.activeClientsCashed.values()], winnersUpdateResponse(winners))
   }
 }

@@ -12,6 +12,7 @@ export const enum BroadcastSources {
 export const enum ResponseTypes {
   Registration = 'reg',
   UpdateRoom = 'update_room',
+  UpdateWinners = 'update_winners',
   CreateGame = 'create_game',
   StartGame = 'start_game',
   NextTurn = 'turn',

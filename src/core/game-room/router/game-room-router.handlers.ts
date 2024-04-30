@@ -3,7 +3,6 @@ import { AddShipsData, AttackData, Message } from '../../../shared/models/messag
 import { Handlers } from '../../../shared/types/types.js'
 import {
   attackResultsResponse,
-  gameFinishedResponse,
   startGameResponse,
 } from '../../../shared/utils/responses.utils.js'
 import { sendToClients } from '../../../shared/utils/send-to-clients.util.js'
@@ -49,7 +48,7 @@ export const gameRoomRouterHandlers: Handlers = {
     attackResults.forEach(attackResult => sendToClients(gameRoom.roomUsers, attackResultsResponse(attackResult)))
 
     if (isGameOver) {
-      sendToClients(gameRoom.roomUsers, gameFinishedResponse(playerId))
+      handleGameOver(gameRoom, playerId)
     }
 
     playerTurnsObserver.nextTurn()

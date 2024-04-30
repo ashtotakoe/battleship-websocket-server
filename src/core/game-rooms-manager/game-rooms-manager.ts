@@ -8,26 +8,21 @@ import { Client } from '../server/client.js'
 export class GameRoomsManager {
   private readonly availableGameRooms$$ = new BehaviorSubject<GameRoom[]>([])
   private gameRoomCallbacks: GameRoomCallbacks = {
-    gameIsCreated: roomId => {
-      const room = this.findRoomById(roomId)
+    gameIsCreated: room => {
+      this.usersCurrentlyInGame.push(...room.roomUsers)
 
-      if (room) {
-        this.usersCurrentlyInGame.push(...room.roomUsers)
-
-        this.availableGameRooms$$.next(this.removeRoomById(roomId))
-      }
+      this.availableGameRooms$$.next(this.removeRoomById(room.roomId))
     },
-    gameIsOver: roomId => {
-      const endedGameRoom = this.findRoomById(roomId)
+    gameIsOver: (room, winnerId) => {
+      this.usersCurrentlyInGame = this.usersCurrentlyInGame.filter(user => !room.roomUsers.includes(user))
 
-      if (endedGameRoom) {
-        this.usersCurrentlyInGame.filter(user => !endedGameRoom.roomUsers.includes(user))
-      }
+      const winner = room.roomUsers.find(user => user.clientState.playerData?.temporaryGameId === winnerId)
+      winner?.playerWon()
     },
   }
 
-  public usersCurrentlyInGame: Client[] = []
   public readonly availableGameRooms$ = this.availableGameRooms$$.asObservable()
+  public usersCurrentlyInGame: Client[] = []
 
   public get availableGameRooms() {
     return this.availableGameRooms$$.value
