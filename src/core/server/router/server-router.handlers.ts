@@ -11,9 +11,7 @@ export const serverRouterHandlers: Handlers = {
     const { clientState } = client
     const { data } = message as Message<CreateUserData>
 
-    if ((clientState.isAuthorized && clientState.playerData) || !eventEmitter) {
-      return
-    }
+    if ((clientState.isAuthorized && clientState.playerData) || !eventEmitter) return
 
     const player = playersDB.getPlayer(data.name)
 

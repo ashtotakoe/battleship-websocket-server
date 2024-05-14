@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs'
 import { Clients } from '../../shared/types/types.js'
 import { Client } from './client.js'
 
-export class activeClientsManager {
+export class ActiveClientsManager {
   private activeClients: Clients = new Map()
   private activeClients$$ = new BehaviorSubject<Clients>(this.activeClients)
 

@@ -10,6 +10,7 @@ export const authorizePlayer = (client: Client, player: Player, eventEmitter: Ev
 
   clientState.isAuthorized = true
   clientState.playerData = player
+  clientState.id = player.index
 
   client.send(userIsAuthorizedResponse(clientState.playerData))
   eventEmitter.emit(Events.SyncWinnersAndRoomsForClient, client)

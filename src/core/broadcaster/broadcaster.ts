@@ -18,32 +18,29 @@ export class Broadcaster {
   ) {}
 
   public broadcast() {
-    this.availableGameRooms$
-      .pipe(
+    merge(
+      this.availableGameRooms$.pipe(
         tap(availableGameRooms => {
           this.availableGameRoomsCashed = availableGameRooms
 
           this.sendAvailableGameRoomsToAllClients(availableGameRooms)
         }),
-      )
-      .subscribe()
-
-    this.activeClients$
-      .pipe(
+      ),
+      this.activeClients$.pipe(
         tap(activeClients => (this.activeClientsCashed = activeClients)),
         switchMap(clients =>
           merge(...Array.from(clients.values()).map(client => client.playerData$)).pipe(
-            tap(playerState => {
-              if (!playerState) return
+            tap(playerData => {
+              if (!playerData) return
 
-              winnersDB.addWinnerData(playerState.name, playerState.numberOfWins ?? 0)
+              winnersDB.addWinnerData(playerData.name, playerData.numberOfWins ?? 0)
 
               this.sendWinnersToAllClients(winnersDB.getWinnersData())
             }),
           ),
         ),
-      )
-      .subscribe()
+      ),
+    ).subscribe()
   }
 
   public syncState(client: Client) {
