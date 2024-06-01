@@ -31,8 +31,6 @@ export const serverRouterHandlers: Handlers = {
       return
     }
 
-    console.log('wrong password')
-
     client.send(wrongPasswordResponse())
   },
 

@@ -1,10 +1,9 @@
-import { map, merge, Observable, scan, shareReplay, switchMap, take, tap } from 'rxjs'
+import { merge, Observable, scan, switchMap, tap } from 'rxjs'
 
 import { Winner } from '../../shared/models/models.js'
 import { Clients } from '../../shared/types/types.js'
 import { gameRoomsUpdateResponse, winnersUpdateResponse } from '../../shared/utils/responses.utils.js'
 import { sendToClients } from '../../shared/utils/send-to-clients.util.js'
-import { winnersDB } from '../db/winners.data-base.js'
 import { GameRoom } from '../game-room/game-room.js'
 import { Client } from '../server/client.js'
 
@@ -16,6 +15,7 @@ export interface BroadcastData {
 export class Broadcaster {
   private availableGameRoomsCashed: GameRoom[] = []
   private activeClientsCashed: Clients = new Map()
+  private winnersCashed: Winner[] = []
 
   private winners$: Observable<Winner[]>
 
@@ -23,68 +23,58 @@ export class Broadcaster {
     private activeClients$: Observable<Clients>,
     private availableGameRooms$: Observable<GameRoom[]>,
   ) {
-    this.activeClients$ = this.activeClients$.pipe(
-      shareReplay(1),
-      tap(val => {
-        console.log('active clients', val)
-      }),
-    )
-
     this.winners$ = this.activeClients$.pipe(
+      tap(activeClients => (this.activeClientsCashed = activeClients)),
       switchMap(activeClients =>
         merge(...Array.from(activeClients.values()).map(client => client.playerData$)).pipe(
+          tap(data => console.log('player data', data)), // emits null
           scan(
             (winners: Winner[], playerData) =>
               playerData
-                ? [...winners, { name: playerData.name, wins: playerData.numberOfWins }].sort((a, b) => a.wins - b.wins)
+                ? [...winners, { name: playerData.name, wins: playerData.numberOfWins }].sort((a, b) => b.wins - a.wins)
                 : winners,
             [],
           ),
-          shareReplay(1),
-          tap(winners => this.sendWinnersToAllClients(winners)),
+          tap(winners => {
+            this.winnersCashed = winners
+
+            this.sendWinnersToAllClients(winners)
+          }),
         ),
       ),
-      tap(val => console.log('winners', val)),
+
+      tap(value => console.log('winners', value)), // debug
     )
 
     this.availableGameRooms$ = this.availableGameRooms$.pipe(
-      shareReplay(1),
-      tap(availableGameRooms => this.sendAvailableGameRoomsToAllClients(availableGameRooms)),
-      tap(val => console.log('available game rooms', val)),
+      tap(availableGameRooms => {
+        this.availableGameRoomsCashed = availableGameRooms
+
+        this.sendAvailableGameRoomsToAllClients(availableGameRooms)
+      }),
+
+      tap(value => console.log('available game rooms', value)), // debug
     )
   }
 
   public broadcast() {
     merge(this.availableGameRooms$, this.winners$).subscribe()
+
+    this.activeClients$.subscribe(activeClients => console.log('active clients', activeClients))
   }
 
   public syncState(client: Client) {
     console.log('sync state for', client.clientState.playerData?.name)
 
-    this.availableGameRooms$
-      .pipe(
-        take(1),
-        // tap(val => console.log('syncing available game rooms', val)),
-      )
-      .subscribe(availableGameRooms => client.send(gameRoomsUpdateResponse(availableGameRooms)))
-
-    this.winners$
-      .pipe(
-        take(1),
-        // tap(val => console.log('syncing winners', val)),
-      )
-      .subscribe(winners => client.send(winnersUpdateResponse(winners)))
+    client.send(gameRoomsUpdateResponse(this.availableGameRoomsCashed))
+    client.send(winnersUpdateResponse(this.winnersCashed))
   }
 
   private sendAvailableGameRoomsToAllClients(data: GameRoom[]) {
-    this.activeClients$.pipe(take(1)).subscribe(activeClients => {
-      sendToClients([...activeClients.values()], gameRoomsUpdateResponse(data))
-    })
+    sendToClients([...this.activeClientsCashed.values()], gameRoomsUpdateResponse(data))
   }
 
   private sendWinnersToAllClients(winners: Winner[]) {
-    this.activeClients$.pipe(take(1)).subscribe(activeClients => {
-      sendToClients([...activeClients.values()], winnersUpdateResponse(winners))
-    })
+    sendToClients([...this.activeClientsCashed.values()], winnersUpdateResponse(winners))
   }
 }
