@@ -26,6 +26,10 @@ export class Client {
     return this.state$$.value
   }
 
+  public set clientState(clientState: ClientState) {
+    this.state$$.next(clientState)
+  }
+
   public playerWon() {
     const { playerData } = this.clientState
     if (!playerData) return

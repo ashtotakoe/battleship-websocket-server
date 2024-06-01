@@ -69,8 +69,7 @@ export const gameRoomRouterHandlers: Handlers = {
     attackResults.forEach(attackResult => sendToClients(gameRoom.roomUsers, attackResultsResponse(attackResult)))
 
 
-    // if isGameOver FOR DEBUGGING PURPOSES CHANGED
-    if (true) {
+    if (isGameOver) {
       handleGameOver(gameRoom, playerId)
     }
 

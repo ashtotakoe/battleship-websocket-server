@@ -6,12 +6,14 @@ import { userIsAuthorizedResponse } from '../../../../shared/utils/responses.uti
 import { Client } from '../../client.js'
 
 export const authorizePlayer = (client: Client, player: Player, eventEmitter: EventEmitter) => {
-  const { clientState } = client
+  client.clientState = {
+    ...client.clientState,
 
-  clientState.isAuthorized = true
-  clientState.playerData = player
-  clientState.id = player.index
+    isAuthorized: true,
+    playerData: player,
+    id: player.index,
+  }
 
-  client.send(userIsAuthorizedResponse(clientState.playerData))
+  client.send(userIsAuthorizedResponse(player))
   eventEmitter.emit(Events.SyncWinnersAndRoomsForClient, client)
 }
