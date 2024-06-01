@@ -30,9 +30,7 @@ export class Client {
     const { playerData } = this.clientState
     if (!playerData) return
 
-    const playerWins = playerData.numberOfWins
-
-    playerData.numberOfWins = playerWins ? playerWins + 1 : 1
+    playerData.numberOfWins++
 
     this.state$$.next(Object.assign(this.clientState, { playerData }))
   }

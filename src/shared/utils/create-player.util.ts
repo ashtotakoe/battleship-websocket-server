@@ -4,4 +4,5 @@ export const createPlayer = (name: string, password: string, index: number): Pla
   name,
   password,
   index,
+  numberOfWins: 0
 })

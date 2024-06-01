@@ -17,6 +17,9 @@ export const serverRouterHandlers: Handlers = {
 
     if (!player) {
       const newPlayer = createPlayer(data.name, data.password, clientState.id)
+
+      playersDB.addPLayer(newPlayer)
+
       authorizePlayer(client, newPlayer, eventEmitter)
 
       return
@@ -27,6 +30,8 @@ export const serverRouterHandlers: Handlers = {
 
       return
     }
+
+    console.log('wrong password')
 
     client.send(wrongPasswordResponse())
   },

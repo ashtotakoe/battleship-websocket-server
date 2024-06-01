@@ -1,7 +1,7 @@
 import { GameCell } from '../../core/game/game-cell.js'
 import { Client } from '../../core/server/client.js'
 import { GameOverCallback, GameStartedCallback, ShipSize } from '../types/types.js'
-import { Message } from './messages.model.js'
+import { AttackResults, Message } from './messages.model.js'
 
 export interface ClientState {
   id: number
@@ -13,8 +13,8 @@ export interface Player {
   name: string
   index: number
   password: string
+  numberOfWins: number
   temporaryGameId?: number
-  numberOfWins?: number
 }
 
 export interface Winner {
@@ -53,7 +53,8 @@ export interface Coordinates {
   x: number
   y: number
 }
-export interface WinnersData {
-  name: string
-  wins: number
+
+export interface AfterAttackData {
+  attackResults: AttackResults[] | null
+  isGameOver: boolean
 }

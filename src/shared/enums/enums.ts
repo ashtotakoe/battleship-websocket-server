@@ -4,11 +4,6 @@ export const enum Events {
   AddUserToRoom = 'add-user-to-room',
 }
 
-export const enum BroadcastSources {
-  GameRooms = 'game-rooms',
-  Winners = 'winners',
-}
-
 export const enum ResponseTypes {
   Registration = 'reg',
   UpdateRoom = 'update_room',

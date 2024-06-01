@@ -1,7 +1,7 @@
 import { boardLength } from '../../shared/constants/board-length.constant.js'
 import { AttackStatuses } from '../../shared/enums/enums.js'
 import { AttackResults } from '../../shared/models/messages.model.js'
-import { Coordinates, Player, Ship, ShipsPosition } from '../../shared/models/models.js'
+import { AfterAttackData, Coordinates, Player, Ship, ShipsPosition } from '../../shared/models/models.js'
 import { ShipsPositions } from '../../shared/types/types.js'
 import { getRandomNumber } from '../../shared/utils/get-random-number.js'
 import { GameCell } from './game-cell.js'
@@ -46,10 +46,7 @@ export class Game {
     shipsPosition.notShotCells = shipsPosition.fullBoard.flat()
   }
 
-  public performRandomAttack(attackingPlayerId: number): {
-    attackResults: AttackResults[] | null
-    isGameOver: boolean
-  } {
+  public performRandomAttack(attackingPlayerId: number): AfterAttackData {
     const enemy = this.findOpposingPlayer(attackingPlayerId)
     if (!enemy?.temporaryGameId) return { attackResults: null, isGameOver: false }
 
@@ -62,13 +59,7 @@ export class Game {
     return this.performAttack(attackingPlayerId, randomTargetCell.coordinates)
   }
 
-  public performAttack(
-    attackingPlayerId: number,
-    coordinates: Coordinates,
-  ): {
-    attackResults: AttackResults[] | null
-    isGameOver: boolean
-  } {
+  public performAttack(attackingPlayerId: number, coordinates: Coordinates): AfterAttackData {
     const enemy = this.findOpposingPlayer(attackingPlayerId)
 
     if (!enemy?.temporaryGameId) return { attackResults: null, isGameOver: false }

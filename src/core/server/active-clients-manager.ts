@@ -12,11 +12,13 @@ export class ActiveClientsManager {
   public setNewActiveClient(client: Client) {
     this.activeClients.set(client.clientState.id, client)
 
+    console.log('active clients change')
     this.activeClients$$.next(this.activeClients)
   }
   public removeFromActiveClients(client: Client) {
     this.activeClients.delete(client.clientState.id)
 
+    console.log('active clients change')
     this.activeClients$$.next(this.activeClients)
   }
 }
