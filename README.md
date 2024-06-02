@@ -1,6 +1,8 @@
 # Battleship WebSocket Server
 
-This is a WebSocket server for playing the classic Battleship game together. Players can connect to game rooms and compete against each other in real-time. The project was developed in the reactive programming paradigm.
+This is a WebSocket server for playing the classic Battleship game together. Players can connect to game rooms and compete against each other in real-time.
+
+The project was developed in the **reactive programming** paradigm.
 
 ## Tech stack
 
