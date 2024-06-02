@@ -30,4 +30,3 @@ export type ShipsPositions = Map<number, ShipsPosition>
 export type PlayerTurn = number | typeof turnOfNobody
 
 export type AttackStatus = 'miss' | 'killed' | 'shot'
-export type Winners = Map<string, number>
